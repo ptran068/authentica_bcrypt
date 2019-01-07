@@ -48,22 +48,22 @@ let userSchema = new Schema({
 //   console.log('post find is executing...');
 // });
 
-userSchema.pre('find', function() {
+userSchema.pre('find', function () {
     preFindMiddleware(this.getQuery());
 });
 
-userSchema.pre('findOne', function() {
+userSchema.pre('findOne', function () {
     preFindMiddleware(this.getQuery());
 });
 
-userSchema.post('save', function(error, doc, next) {
+userSchema.post('save', function (error, doc, next) {
     if (error.name === 'MongoError' && error.code === 11000) {
         return next(new Error('this email has been using'));
     }
     return  next(error);
 });
 
-function preFindMiddleware(query) {
+function preFindMiddleware (query) {
     return query.deletedAt = null;
 }
 
@@ -75,7 +75,7 @@ userSchema.pre('save', function (next) {
       }
       user.password = hash;
       next();
-    })
+    });
   });
 
   userSchema.pre('update', function (next) {
@@ -86,7 +86,7 @@ userSchema.pre('save', function (next) {
       }
       user.password = hash;
       next();
-    })
+    });
   });
 
 
