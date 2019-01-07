@@ -1,6 +1,6 @@
-import User from '../models/user'
+import User from '../models/user';
 import bcrypt from 'bcrypt';
-const saltRounds = 10;
+// const saltRounds = 10;
 
 class Users {
     async getAll (req, res, next) {
@@ -17,12 +17,11 @@ class Users {
 
     async addUser (req, res, next) {
         try {
-            const {fullName, email, password} = req.body;
+            const { fullName, email, password } = req.body;
             const user = new User({
                 fullName,
                 email,
-                password
-                
+                password        
             });
             await user.save();
             console.log(user._doc.password);
@@ -38,9 +37,9 @@ class Users {
 
     async login (req, res, next) {
         try {
-            const {email , password} = req.body;
+            const { email , password } = req.body;
             // const hash = bcrypt.hashSync(password, saltRounds);
-            const user = await User.findOne({email});
+            const user = await User.findOne({ email });
             if (!user) {
                 return next(new Error('User is not found'));
             }
@@ -60,14 +59,12 @@ class Users {
     async updatePass (req, res, next) {
         try {
            
-            const {email, password, newpass, renewpass} = req.body;
-            const user = await User.findOne({email});
+            const { email, password, newpass, renewpass } = req.body;
+            const user = await User.findOne({ email });
             if (!user) {
                 return next(new Error('User is not found'));
             }
-            console.log(user);
-            const isCorrectPassword =await bcrypt.compareSync(password, user.password);
-            console.log(isCorrectPassword)
+            const isCorrectPassword = await bcrypt.compareSync(password, user.password);
             if (!isCorrectPassword) {
                 return next(new Error('Old Password is not correct'));
             }
