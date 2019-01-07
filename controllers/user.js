@@ -66,10 +66,13 @@ class Users {
                 return next(new Error('User is not found'));
             }
             console.log(user);
-            const isCorrectPassword =await bcrypt.compareSync(password, user.password) ;
+            const isCorrectPassword =await bcrypt.compareSync(password, user.password);
             console.log(isCorrectPassword)
             if (!isCorrectPassword) {
                 return next(new Error('Old Password is not correct'));
+            }
+            if (!newpass) {
+                return next(new Error('New pass is required'));
             }
             if ( newpass !== renewpass){
                 return next(new Error('Repassword is not match'));
