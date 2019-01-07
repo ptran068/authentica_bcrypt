@@ -87,18 +87,6 @@ class Users {
         }
     }
 
-    async findPass (req, res, next) {
-        try {
-            const { email } = req.body;
-            const user = await User.findOne({ email });
-            if (!user) {
-                return next(new Error('User is not found'));
-            }
-
-        } catch (e) {
-            return next(e);
-        }
-    }
 }
 
 module.exports = Users;
