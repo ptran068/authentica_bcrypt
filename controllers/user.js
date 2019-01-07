@@ -71,7 +71,7 @@ class Users {
             if (!newpass) {
                 return next(new Error('New pass is required'));
             }
-            if ( newpass !== renewpass){
+            if (newpass !== renewpass) {
                 return next(new Error('Repassword is not match'));
             }
             user.password = newpass;
@@ -81,6 +81,19 @@ class Users {
                 isSuccess: true,
                 message: 'update successfully'
             });
+
+        } catch (e) {
+            return next(e);
+        }
+    }
+
+    async findPass (req, res, next) {
+        try {
+            const { email } = req.body;
+            const user = await User.findOne({ email });
+            if (!user) {
+                return next(new Error('User is not found'));
+            }
 
         } catch (e) {
             return next(e);
