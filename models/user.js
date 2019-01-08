@@ -69,7 +69,7 @@ function preFindMiddleware (query) {
 
 userSchema.pre('save', function (next) {
     var user = this;
-    bcrypt.hash(user.password, 10, function (err, hash){
+    bcrypt.hash(user.password, 10, function (err, hash) {
       if (err) {
         return next(err);
       }
@@ -78,16 +78,16 @@ userSchema.pre('save', function (next) {
     });
   });
 
-  userSchema.pre('update', function (next) {
-    var user = this;
-    bcrypt.hash(user.password, 10, function (err, hash){
-      if (err) {
-        return next(err);
-      }
-      user.password = hash;
-      next();
-    });
-  });
+//   userSchema.pre('update', function (next) {
+//     var user = this;
+//     bcrypt.hash(user.password, 10, function (err, hash){
+//       if (err) {
+//         return next(err);
+//       }
+//       user.password = hash;
+//       next();
+//     });
+//   });
 
 
 

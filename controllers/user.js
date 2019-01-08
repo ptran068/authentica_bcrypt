@@ -1,11 +1,13 @@
 import User from '../models/user';
 import bcrypt from 'bcrypt';
+import JWT from 'jsonwebtoken';
+import key from '../config/development';
 // const saltRounds = 10;
 
 class Users {
     async getAll (req, res, next) {
         try {
-            const users = await User.find();
+            const users = await User.find().lean(true);
             return res.json({
                 isSuccess: true,
                 users
@@ -24,7 +26,7 @@ class Users {
                 password        
             });
             await user.save();
-            console.log(user._doc.password);
+            delete user._doc.password;
             return res.json({
                 isSuccess: true,
                 user
@@ -47,10 +49,14 @@ class Users {
             if (isCorrectPassword === false) {
                 return next(new Error('Password is not correct'));
             }
+            delete user._doc.password;
+            const token = await JWT.sign(user._doc, key.sceret);
             return res.json({
                 isSuccess: true,
-                message: 'Login successfully'
-            });
+                user,
+                token
+        });
+
         } catch (e) {
             return next(e);
         }
@@ -58,9 +64,9 @@ class Users {
 
     async updatePass (req, res, next) {
         try {
-           
-            const { email, password, newpass, renewpass } = req.body;
-            const user = await User.findOne({ email });
+            const id = req.user._id;
+            const {  password, newpass, renewpass } = req.body;
+            const user = await User.findById(id).select('password').lean(true);
             if (!user) {
                 return next(new Error('User is not found'));
             }
@@ -74,18 +80,19 @@ class Users {
             if (newpass !== renewpass) {
                 return next(new Error('Repassword is not match'));
             }
-            user.password = newpass;
-            await user.save();
-            
+            const hash = bcrypt.hashSync(renewpass, 10);
+            user.password = renewpass;
+            await User.update({ _id: id }, { $set: { password: hash } });         
             return res.json({
                 isSuccess: true,
-                message: 'update successfully'
+                message: 'Update successfully'
             });
 
         } catch (e) {
             return next(e);
         }
     }
+
 
 }
 
