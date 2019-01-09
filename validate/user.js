@@ -7,7 +7,8 @@ exports.createUser = {
             lastName: Joi.string().min(3).max(30)
         }),
         email: Joi.string().required().email({ minDomainAtoms: 2 }).min(3).max(30),
-        password: Joi.string().required().min(3).max(30)
+        password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).min(3).max(30).required(),
+
 
     },
 };
@@ -22,6 +23,14 @@ exports.updateUser = {
     },
     params: {
        	id: Joi.string().required()
+    }
+};
+
+exports.changePassword = {
+    body: {
+        password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).min(3).max(30).required(),
+        newpass: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).min(3).max(30).required(),
+        passwordConfirm: Joi.any().valid(Joi.ref('newpass')).required().options({ language: { any: { allowOnly: 'PasswordConfirm must match NewPassword' } } })
     }
 };
 

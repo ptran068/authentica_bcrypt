@@ -1,5 +1,6 @@
 import JWT from 'jsonwebtoken';
 import User from '../models/user';
+import key from '../config/development';
 
 class Authentication {
       
@@ -14,7 +15,7 @@ class Authentication {
                 return next(new Error('Not authentication format'));
             }
             const authToken = tokens[1];
-            const data = await JWT.verify(authToken, '77yIw21VsG');
+            const data = await JWT.verify(authToken, key.sceret);
             const _id = data._id;
             if (!_id) {
                 return next(new Error('Cannot get _id from jwt payload'));

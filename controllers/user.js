@@ -65,7 +65,7 @@ class Users {
     async updatePass (req, res, next) {
         try {
             const id = req.user._id;
-            const {  password, newpass, renewpass } = req.body;
+            const {  password, newpass, passwordConfirm } = req.body;
             const user = await User.findById(id).select('password').lean(true);
             if (!user) {
                 return next(new Error('User is not found'));
@@ -77,11 +77,11 @@ class Users {
             if (!newpass) {
                 return next(new Error('New pass is required'));
             }
-            if (newpass !== renewpass) {
-                return next(new Error('Repassword is not match'));
-            }
-            const hash = bcrypt.hashSync(renewpass, 10);
-            user.password = renewpass;
+            // if (newpass !== passwordConfirm) {
+            //     return next(new Error('Repassword is not match'));
+            // }
+            const hash = bcrypt.hashSync(passwordConfirm, 10);
+            user.password = passwordConfirm;
             await User.update({ _id: id }, { $set: { password: hash } });         
             return res.json({
                 isSuccess: true,
