@@ -8,8 +8,6 @@ exports.createUser = {
         }),
         email: Joi.string().required().email({ minDomainAtoms: 2 }).min(3).max(30),
         password: Joi.string().regex(/^[a-zA-Z0-9]{3,30}$/).min(3).max(30).required(),
-
-
     },
 };
 

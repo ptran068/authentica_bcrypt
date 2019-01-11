@@ -1,21 +1,24 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import bcrypt from 'bcrypt';
-import router from './index';
+import user from './routers/user';
+import group from './routers/group';
+import message from './routers/message';
 import mongoose from 'mongoose';
-import mongodb from 'mongodb';
+import config from './config/development';
 
-const db = mongoose.connection;
+// const db = mongoose.connection;
 
 const PORT = process.env.PORT || 3000;
 const app = express();
 
-mongoose.connect('mongodb://localhost:27017/login', { useNewUrlParser: true });
+mongoose.connect(config.db, { useNewUrlParser: true });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(router);
+app.use(user);
+app.use(group);
+app.use(message);
 
 app.use((e, req, res, next) => {
 	return res.status(400).json({

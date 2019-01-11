@@ -6,7 +6,7 @@ class Authentication {
       
     async auth (req, res, next) {
         try {
-            const token = req.headers.token || req.body.token || req.query.token;
+            const token = req.body.token;
             if (!token) {
                 return next(new Error('Not found authentication'));
             }
@@ -20,7 +20,7 @@ class Authentication {
             if (!_id) {
                 return next(new Error('Cannot get _id from jwt payload'));
             }
-            const user = await User.findById(_id);
+            const user = await User.findById(_id).lean(true);
             if (!user) {
                 return next(new Error('User is not found'));
             }

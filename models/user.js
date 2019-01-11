@@ -30,7 +30,7 @@ let userSchema = new Schema({
         default: null
 
     }
-});
+}, { timestamps: true });
 // userSchema.pre('find', function() {
 // 	const query = this.getQuery();
 //     query['$or'] = [

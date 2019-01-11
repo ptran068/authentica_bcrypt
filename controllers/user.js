@@ -7,7 +7,8 @@ import key from '../config/development';
 class Users {
     async getAll (req, res, next) {
         try {
-            const users = await User.find().lean(true);
+            const users = await User.find().sort({ _id: -1 }).limit(10).lean(true);
+            console.log(users);
             return res.json({
                 isSuccess: true,
                 users
@@ -16,6 +17,8 @@ class Users {
             return next(e);
         }
     }
+
+    
 
     async addUser (req, res, next) {
         try {
@@ -41,7 +44,7 @@ class Users {
         try {
             const { email , password } = req.body;
             // const hash = bcrypt.hashSync(password, saltRounds);
-            const user = await User.findOne({ email });
+            const user = await User.findOne({ email }).select('password email').lean(true);
             if (!user) {
                 return next(new Error('User is not found'));
             }
@@ -49,8 +52,8 @@ class Users {
             if (isCorrectPassword === false) {
                 return next(new Error('Password is not correct'));
             }
-            delete user._doc.password;
-            const token = await JWT.sign(user._doc, key.sceret);
+            delete user.password;
+            const token = await JWT.sign(user, key.sceret);
             return res.json({
                 isSuccess: true,
                 user,
@@ -65,7 +68,7 @@ class Users {
     async updatePass (req, res, next) {
         try {
             const id = req.user._id;
-            const {  password, newpass, passwordConfirm } = req.body;
+            const {  password, passwordConfirm } = req.body;
             const user = await User.findById(id).select('password').lean(true);
             if (!user) {
                 return next(new Error('User is not found'));
@@ -74,12 +77,6 @@ class Users {
             if (!isCorrectPassword) {
                 return next(new Error('Old Password is not correct'));
             }
-            if (!newpass) {
-                return next(new Error('New pass is required'));
-            }
-            // if (newpass !== passwordConfirm) {
-            //     return next(new Error('Repassword is not match'));
-            // }
             const hash = bcrypt.hashSync(passwordConfirm, 10);
             user.password = passwordConfirm;
             await User.update({ _id: id }, { $set: { password: hash } });         

@@ -1,8 +1,8 @@
 import express from 'express';
-import userController from './controllers/user';
+import userController from '../controllers/user';
 import Validate from 'express-validation';
-import { createUser, updateUser, changePassword } from './validate/user';
-import Auth from './middlewares/authentica';
+import { createUser, updateUser, changePassword } from '../validate/user';
+import Auth from '../middlewares/authentica';
 const router = express.Router();
 const userControllers = new userController();
 const Authentication = new Auth();
