@@ -17,7 +17,8 @@ const messageSchema = new Schema({
     },
     group: {
         type: ObjectId,
-        ref: 'group'
+        ref: 'group',
+        unique: true
     },
     deleteAt: {
         type: Date,
@@ -28,7 +29,7 @@ const messageSchema = new Schema({
 
 messageSchema.post('save', function (error, doc, next) {
     if (error.name === 'MongoError' && error.code === 11000) {
-        return next(new Error('this author has been using'));
+        return next(new Error('this author or group has been using'));
     }
     return  next(error);
 });

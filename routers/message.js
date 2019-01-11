@@ -1,7 +1,7 @@
 import express from 'express';
 import messageController from '../controllers/message';
 import Validate from 'express-validation';
-import { createMessage } from '../validate/message';
+import { createMessage, updateMessage } from '../validate/message';
 import Auth from '../middlewares/authentica';
 
 const messageControllers = new messageController();
@@ -12,6 +12,6 @@ router
       .get('/messages', [Authentication.auth], messageControllers.getAll)
       .post('/messages', [Validate(createMessage), Authentication.auth], messageControllers.createMessage)
       .delete('/messages/:id', messageControllers.deleteMessage)
-      .put('/messages/:id', messageControllers.updateMessage);
+      .put('/messages/:id', [Validate(updateMessage)], messageControllers.updateMessage);
 
 export default router;
